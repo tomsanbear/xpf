@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/tomsanbear/coredns-xpf-plugin.svg?branch=master)](https://travis-ci.org/tomsanbear/coredns-xpf-plugin) [![codecov](https://codecov.io/gh/tomsanbear/coredns-xpf-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/tomsanbear/coredns-xpf-plugin)
+
+
+
 # Project Title
 
 One Paragraph of project description goes here

@@ -23,13 +23,15 @@ func New() (*XPF, error) {
 	return &XPF{}, nil
 }
 
-func (xpf *XPF) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (int, error) {
+func (xpf *XPF) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (rc int, err error) {
 	state := request.Request{W: w, Req: r}
 	rrw := dnstest.NewRecorder(w)
 
-	appendXpfRecord(&state)
-
-	rc, err := plugin.NextOrFailure(xpf.Name(), xpf.Next, ctx, rrw, r)
+	err = appendXpfRecord(&state)
+	if err != nil {
+		return rc, &Error{"failed to append the XPF record to the DNS request"}
+	}
+	rc, err = plugin.NextOrFailure(xpf.Name(), xpf.Next, ctx, rrw, r)
 	return rc, err
 }
 
@@ -51,12 +53,12 @@ func appendXpfRecord(state *request.Request) error {
 	}
 	srcPort64, err := strconv.ParseUint(state.Port(), 16, 16)
 	if err != nil {
-		// TODO: Handle it
+		return err
 	}
 	xpfRRData.SrcPort = uint16(srcPort64)
 	destPort64, err := strconv.ParseUint(state.LocalPort(), 16, 16)
 	if err != nil {
-		// TODO: Handle it
+		return err
 	}
 	xpfRRData.DestPort = uint16(destPort64)
 	xpfRRData.Protocol = protoIANA(state.Proto())
@@ -84,5 +86,5 @@ func protoIANA(proto string) uint8 {
 	case "tcp":
 		return 6
 	}
-	return 17 // TODO: should error here?
+	return 17
 }

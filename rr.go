@@ -94,19 +94,37 @@ func (rr *XPFPrivateRR) Unpack(msg []byte) (off int, err error) {
 	if off == len(msg) {
 		return off, nil
 	}
-	rr.SrcAddress, off, err = unpackDataA(msg, off)
-	if err != nil {
-		return off, err
-	}
-	if off == len(msg) {
-		return off, nil
-	}
-	rr.DestAddress, off, err = unpackDataA(msg, off)
-	if err != nil {
-		return off, err
-	}
-	if off == len(msg) {
-		return off, nil
+	switch rr.IPVersion {
+	case 4:
+		rr.SrcAddress, off, err = unpackDataA(msg, off)
+		if err != nil {
+			return off, err
+		}
+		if off == len(msg) {
+			return off, nil
+		}
+		rr.DestAddress, off, err = unpackDataA(msg, off)
+		if err != nil {
+			return off, err
+		}
+		if off == len(msg) {
+			return off, nil
+		}
+	case 6:
+		rr.SrcAddress, off, err = unpackDataAAAA(msg, off)
+		if err != nil {
+			return off, err
+		}
+		if off == len(msg) {
+			return off, nil
+		}
+		rr.DestAddress, off, err = unpackDataAAAA(msg, off)
+		if err != nil {
+			return off, err
+		}
+		if off == len(msg) {
+			return off, nil
+		}
 	}
 	rr.SrcPort, off, err = unpackUint16(msg, off)
 	if err != nil {
@@ -123,13 +141,15 @@ func (rr *XPFPrivateRR) Unpack(msg []byte) (off int, err error) {
 }
 
 func (rr *XPFPrivateRR) Copy(dest dns.PrivateRdata) error {
-	dest = &XPFPrivateRR{
-		rr.IPVersion,
-		rr.Protocol,
-		rr.SrcAddress,
-		rr.DestAddress,
-		rr.SrcPort,
-		rr.DestPort,
+	xpf, ok := dest.(*XPFPrivateRR)
+	if !ok {
+		return dns.ErrRdata
 	}
+	xpf.IPVersion = rr.IPVersion
+	xpf.Protocol = rr.Protocol
+	xpf.SrcAddress = rr.SrcAddress
+	xpf.DestAddress = rr.DestAddress
+	xpf.SrcPort = rr.SrcPort
+	xpf.DestPort = rr.DestPort
 	return nil
 }

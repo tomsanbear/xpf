@@ -3,12 +3,9 @@ package xpf
 import (
 	"github.com/coredns/coredns/core/dnsserver"
 	"github.com/coredns/coredns/plugin"
-	clog "github.com/coredns/coredns/plugin/pkg/log"
 	"github.com/mholt/caddy"
 	"github.com/miekg/dns"
 )
-
-var log = clog.NewWithPlugin("forward")
 
 func init() {
 	caddy.RegisterPlugin("xpf", caddy.Plugin{
