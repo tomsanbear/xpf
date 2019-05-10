@@ -5,6 +5,7 @@ import (
 	"github.com/coredns/coredns/plugin"
 	clog "github.com/coredns/coredns/plugin/pkg/log"
 	"github.com/mholt/caddy"
+	"github.com/miekg/dns"
 )
 
 var log = clog.NewWithPlugin("forward")
@@ -17,6 +18,10 @@ func init() {
 }
 
 func setup(c *caddy.Controller) error {
+	// Setup up the new record type
+	dns.PrivateHandle("XPF", TypeXPF, NewXPFPrivateRR)
+
+	// Normal Setup
 	xpf, err := parseXpf(c)
 	if err != nil {
 		return plugin.Error("xpf", err)

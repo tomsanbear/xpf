@@ -45,17 +45,91 @@ func (rr *XPFPrivateRR) String() string {
 }
 
 func (rr *XPFPrivateRR) Parse(txt []string) error {
-	// TODO:
+	panic("dns: internal error: parse should never be called on XPF")
 }
 
-func (rr *XPFPrivateRR) Pack(buf []byte) (int, error) {
-	// TODO:
+func (rr *XPFPrivateRR) Pack(msg []byte) (off int, err error) {
+	off, err = packUint8(rr.IPVersion, msg, off)
+	if err != nil {
+		return off, err
+	}
+	off, err = packUint8(rr.Protocol, msg, off)
+	if err != nil {
+		return off, err
+	}
+	off, err = packDataA(rr.SrcAddress, msg, off)
+	if err != nil {
+		return off, err
+	}
+	off, err = packDataA(rr.DestAddress, msg, off)
+	if err != nil {
+		return off, err
+	}
+	off, err = packUint16(rr.SrcPort, msg, off)
+	if err != nil {
+		return off, err
+	}
+	off, err = packUint16(rr.DestPort, msg, off)
+	if err != nil {
+		return off, err
+	}
+	return off, nil
 }
 
-func (rr *XPFPrivateRR) Unpack(buf []byte) (int, error) {
-	// TODO:
+func (rr *XPFPrivateRR) Unpack(msg []byte) (off int, err error) {
+	rdStart := off
+	_ = rdStart
+
+	rr.IPVersion, off, err = unpackUint8(msg, off)
+	if err != nil {
+		return off, err
+	}
+	if off == len(msg) {
+		return off, nil
+	}
+	rr.Protocol, off, err = unpackUint8(msg, off)
+	if err != nil {
+		return off, err
+	}
+	if off == len(msg) {
+		return off, nil
+	}
+	rr.SrcAddress, off, err = unpackDataA(msg, off)
+	if err != nil {
+		return off, err
+	}
+	if off == len(msg) {
+		return off, nil
+	}
+	rr.DestAddress, off, err = unpackDataA(msg, off)
+	if err != nil {
+		return off, err
+	}
+	if off == len(msg) {
+		return off, nil
+	}
+	rr.SrcPort, off, err = unpackUint16(msg, off)
+	if err != nil {
+		return off, err
+	}
+	if off == len(msg) {
+		return off, nil
+	}
+	rr.DestPort, off, err = unpackUint16(msg, off)
+	if err != nil {
+		return off, err
+	}
+	return off, nil
 }
 
 func (rr *XPFPrivateRR) Copy(dest dns.PrivateRdata) error {
-	// TODO:
+	dest = &XPFPrivateRR{
+		rr.IPVersion,
+		rr.Protocol,
+		rr.SrcAddress,
+		rr.DestAddress,
+		rr.SrcPort,
+		rr.DestPort,
+	}
+	return nil
 }
