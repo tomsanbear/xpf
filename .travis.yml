@@ -4,14 +4,11 @@ go:
   - 1.12.x
   - master
 
-env:
-  - GO111MODULE=on
-  - GOFLAGS='-mod vendor'
-
 git:
   depth: 1
 
 before_script:
+  - export GO111MODULE=on
   - go install github.com/golangci/golangci-lint/cmd/golangci-lint
 
 script:
