@@ -40,14 +40,14 @@ func TestParseXPF(t *testing.T) {
 }
 
 func TestPackXPF(t *testing.T) {
-	tests := []struct {
+	testsV4 := []struct {
 		testrecord XPFPrivateRR
 		shouldErr  bool
 	}{
 		{XPFPrivateRR{4, 16, net.IPv4(1, 2, 3, 4).To4(), net.IPv4(1, 2, 3, 4).To4(), 53, 533}, false},
 	}
 
-	for _, test := range tests {
+	for _, test := range testsV4 {
 		msgPacked := make([]byte, 14)
 		_, err := test.testrecord.Pack(msgPacked)
 		if test.shouldErr {
@@ -62,8 +62,33 @@ func TestPackXPF(t *testing.T) {
 			assert.Error(t, err)
 		} else {
 			assert.Nil(t, err)
+			assert.Equal(t, test.testrecord, msgUnpacked)
+		}
+	}
+
+	testsV6 := []struct {
+		testrecord XPFPrivateRR
+		shouldErr  bool
+	}{
+		{XPFPrivateRR{6, 16, net.IP{0xff, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01}.To16(), net.IP{0xff, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01}.To16(), 53, 533}, false},
+	}
+
+	for _, test := range testsV6 {
+		msgPacked := make([]byte, 38)
+		_, err := test.testrecord.Pack(msgPacked)
+		if test.shouldErr {
+			assert.Error(t, err)
+		} else {
+			assert.Nil(t, err)
 		}
 
-		assert.Equal(t, test.testrecord, msgUnpacked)
+		var msgUnpacked XPFPrivateRR
+		_, err = msgUnpacked.Unpack(msgPacked)
+		if test.shouldErr {
+			assert.Error(t, err)
+		} else {
+			assert.Nil(t, err)
+			assert.Equal(t, test.testrecord, msgUnpacked)
+		}
 	}
 }
