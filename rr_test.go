@@ -1,6 +1,7 @@
 package xpf
 
 import (
+	"net"
 	"strings"
 	"testing"
 
@@ -35,5 +36,34 @@ func TestParseXPF(t *testing.T) {
 		} else {
 			assert.Equal(t, rr.String(), test.testrecord)
 		}
+	}
+}
+
+func TestPackXPF(t *testing.T) {
+	tests := []struct {
+		testrecord XPFPrivateRR
+		shouldErr  bool
+	}{
+		{XPFPrivateRR{4, 16, net.IPv4(1, 2, 3, 4).To4(), net.IPv4(1, 2, 3, 4).To4(), 53, 533}, false},
+	}
+
+	for _, test := range tests {
+		msgPacked := make([]byte, 14)
+		_, err := test.testrecord.Pack(msgPacked)
+		if test.shouldErr {
+			assert.Error(t, err)
+		} else {
+			assert.Nil(t, err)
+		}
+
+		var msgUnpacked XPFPrivateRR
+		_, err = msgUnpacked.Unpack(msgPacked)
+		if test.shouldErr {
+			assert.Error(t, err)
+		} else {
+			assert.Nil(t, err)
+		}
+
+		assert.Equal(t, test.testrecord, msgUnpacked)
 	}
 }
