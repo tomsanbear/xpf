@@ -2,7 +2,9 @@ package xpf
 
 import (
 	"encoding/binary"
+	"fmt"
 	"net"
+	"strconv"
 )
 
 func unpackUint8(msg []byte, off int) (i uint8, off1 int, err error) {
@@ -86,4 +88,57 @@ func packUint16(i uint16, msg []byte, off int) (off1 int, err error) {
 	}
 	binary.BigEndian.PutUint16(msg[off:], i)
 	return off + 2, nil
+}
+
+func parseIPVersion(s string) (ui uint8, err error) {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return ui, err
+	}
+	if i != 4 && i != 6 {
+		return ui, fmt.Errorf("invalid IP version %v", i)
+	}
+	return uint8(i), nil
+}
+
+func parseProtocol(s string) (ui uint8, err error) {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return ui, err
+	}
+	if i != 17 && i != 6 {
+		return ui, fmt.Errorf("invalid network protocol %v", i)
+	}
+	return uint8(i), nil
+}
+
+func parseIPAddress(s string, version uint8) (net.IP, error) {
+	ip := net.ParseIP(s)
+	if ip == nil {
+		return ip, fmt.Errorf("failed to translate %v to an IP Address", s)
+	}
+
+	switch version {
+	case 4:
+		if ip.To4() == nil {
+			return ip, fmt.Errorf("failed to parse %v as IPV4", ip)
+		}
+	case 6:
+		if ip.To16() == nil {
+			return ip, fmt.Errorf("failed to parse %v as IPv6", ip)
+		}
+	}
+
+	return ip, nil
+}
+
+func parsePort(s string) (ui uint16, err error) {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return ui, err
+	}
+	if i <= 0 {
+		return ui, fmt.Errorf("invalid port number %v", i)
+	}
+	return uint16(i), err
 }

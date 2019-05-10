@@ -1,8 +1,8 @@
 package xpf
 
 import (
-	"fmt"
 	"net"
+	"strconv"
 
 	"github.com/miekg/dns"
 )
@@ -41,11 +41,42 @@ func (rr *XPFPrivateRR) Len() int {
 }
 
 func (rr *XPFPrivateRR) String() string {
-	return fmt.Sprintf(";%v %v %v %v", rr.SrcAddress, rr.SrcPort, rr.DestAddress, rr.DestPort)
+	var s string
+	s += strconv.Itoa(int(rr.IPVersion)) + "\t"
+	s += strconv.Itoa(int(rr.Protocol)) + "\t"
+	s += rr.SrcAddress.String() + "\t"
+	s += rr.DestAddress.String() + "\t"
+	s += strconv.Itoa(int(rr.SrcPort)) + "\t"
+	s += strconv.Itoa(int(rr.DestPort))
+	return s
 }
 
-func (rr *XPFPrivateRR) Parse(txt []string) error {
-	panic("dns: internal error: parse should never be called on XPF")
+func (rr *XPFPrivateRR) Parse(txt []string) (err error) {
+	rr.IPVersion, err = parseIPVersion(txt[0])
+	if err != nil {
+		return err
+	}
+	rr.Protocol, err = parseProtocol(txt[1])
+	if err != nil {
+		return err
+	}
+	rr.SrcAddress, err = parseIPAddress(txt[2], rr.IPVersion)
+	if err != nil {
+		return err
+	}
+	rr.DestAddress, err = parseIPAddress(txt[3], rr.IPVersion)
+	if err != nil {
+		return err
+	}
+	rr.SrcPort, err = parsePort(txt[4])
+	if err != nil {
+		return err
+	}
+	rr.DestPort, err = parsePort(txt[5])
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (rr *XPFPrivateRR) Pack(msg []byte) (off int, err error) {
