@@ -57,13 +57,25 @@ func (rr *XPFPrivateRR) Pack(msg []byte) (off int, err error) {
 	if err != nil {
 		return off, err
 	}
-	off, err = packDataA(rr.SrcAddress, msg, off)
-	if err != nil {
-		return off, err
-	}
-	off, err = packDataA(rr.DestAddress, msg, off)
-	if err != nil {
-		return off, err
+	switch rr.IPVersion {
+	case 4:
+		off, err = packDataA(rr.SrcAddress, msg, off)
+		if err != nil {
+			return off, err
+		}
+		off, err = packDataA(rr.DestAddress, msg, off)
+		if err != nil {
+			return off, err
+		}
+	case 6:
+		off, err = packDataAAAA(rr.SrcAddress, msg, off)
+		if err != nil {
+			return off, err
+		}
+		off, err = packDataAAAA(rr.DestAddress, msg, off)
+		if err != nil {
+			return off, err
+		}
 	}
 	off, err = packUint16(rr.SrcPort, msg, off)
 	if err != nil {
