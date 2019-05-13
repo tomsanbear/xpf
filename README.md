@@ -2,69 +2,40 @@
 
 
 
-# Project Title
+# CoreDNS XPF
 
-One Paragraph of project description goes here
+This coredns plugin appends an XPF record to the DNS request, containing the Source & Destination Address & Port. This aims to allow you to use CoreDNS as a DNS proxy, while still passing client information through for audit/analysis purposes.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+- Go 1.12 or later
+- Go modules should be enabled
 
-```
-Give examples
-```
+All you need to do is add the following line to your plugins.cfg in the CoreDNS project:
+xpf:github.com/tomsanbear/xpf
+
+Build the binary and go from there
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+1. First clone the CoreDNS repository [CoreDNS](https://github.com/coredns/coredns)
+2. Add ```xpf:github.com/tomsanbear/xpf``` to the plugins.cfg file within the repo (IMPORTANT NOTE: this must appear before any other resolving plugin you may be using. See below for more details)
+3. Build the binary with 'make', or if you are building on OSX and want to target a linux docker container 'GOOS=linux make'
 
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
+Plugin Note:
+Due to the way the server chains plugins, you need to ensure that any plugin that comes after this one, in the plugin.cfg, does not care about the record being there. See the plugins.cfg file comments for more detail.
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+Test coverage is still a little lacking, but I'm looking to get the full thing tested, with performance metrics as well in the future. 
 
-### Break down into end to end tests
+### Code Style Tests
 
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+Enforcing style with the <em>golangci-lint</em> tool
 
 ## Contributing
 
@@ -72,13 +43,13 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/tomsanbear/xpf/tags). 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Thomas Santerre** - *Initial work* - [tomsanbear](https://github.com/tomsanbear)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/tomsanbear/xpf/contributors) who participated in this project.
 
 ## License
 
@@ -86,7 +57,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
-
+* Coredns for being a great DNS server/project
+* [Ray Bellis](https://github.com/raybellis) for the initial draft on [DNS XPF](https://www.ietf.org/archive/id/draft-bellis-dnsop-xpf-04.txt)
+* [PurpleBooth](https://github.com/PurpleBooth) for the nice Readme template

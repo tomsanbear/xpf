@@ -1,6 +1,7 @@
 package xpf
 
 import (
+	"fmt"
 	"net"
 	"strconv"
 
@@ -65,7 +66,10 @@ func appendXpfRecord(state *request.Request) error {
 		return err
 	}
 	xpfRRData.DestPort = uint16(destPort64)
-	xpfRRData.Protocol = protoIANA(state.Proto())
+	xpfRRData.Protocol, err = protoIANA(state.Proto())
+	if err != nil {
+		return err
+	}
 
 	// Put the data into the PrivateRR
 	xpfRR.Data = xpfRRData
@@ -83,12 +87,12 @@ func appendXpfRecord(state *request.Request) error {
 	return nil
 }
 
-func protoIANA(proto string) uint8 {
+func protoIANA(proto string) (uint8, error) {
 	switch proto {
 	case "udp":
-		return 17
+		return 17, nil
 	case "tcp":
-		return 6
+		return 6, nil
 	}
-	return 17
+	return 0, fmt.Errorf("invalid network protocol: %v", proto)
 }
