@@ -6,12 +6,15 @@ import (
 
 	"github.com/coredns/coredns/plugin"
 	"github.com/coredns/coredns/plugin/pkg/dnstest"
+	clog "github.com/coredns/coredns/plugin/pkg/log"
 	"github.com/coredns/coredns/request"
 	"github.com/miekg/dns"
 	"golang.org/x/net/context"
 )
 
 const TypeXPF uint16 = 65422
+
+var log = clog.NewWithPlugin("xpf")
 
 // XPF type captures anything needed to append the XPF record to our queries
 type XPF struct {
@@ -29,6 +32,7 @@ func (xpf *XPF) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) 
 
 	err = appendXpfRecord(&state)
 	if err != nil {
+		clog.Errorf("xpf append failed with: %v", err)
 		return rc, &Error{"failed to append the XPF record to the DNS request"}
 	}
 	rc, err = plugin.NextOrFailure(xpf.Name(), xpf.Next, ctx, rrw, r)
