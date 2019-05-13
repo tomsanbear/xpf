@@ -32,7 +32,7 @@ func (xpf *XPF) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) 
 
 	err = appendXpfRecord(&state)
 	if err != nil {
-		clog.Errorf("xpf append failed with: %v", err)
+		log.Errorf("xpf append failed with: %v", err)
 		return rc, &Error{"failed to append the XPF record to the DNS request"}
 	}
 	rc, err = plugin.NextOrFailure(xpf.Name(), xpf.Next, ctx, rrw, r)
