@@ -55,12 +55,12 @@ func appendXpfRecord(state *request.Request) error {
 		xpfRRData.SrcAddress = net.ParseIP(state.IP()).To16()
 		xpfRRData.DestAddress = net.ParseIP(state.LocalIP()).To16()
 	}
-	srcPort64, err := strconv.ParseUint(state.Port(), 16, 16)
+	srcPort64, err := strconv.ParseUint(state.Port(), 10, 16)
 	if err != nil {
 		return err
 	}
 	xpfRRData.SrcPort = uint16(srcPort64)
-	destPort64, err := strconv.ParseUint(state.LocalPort(), 16, 16)
+	destPort64, err := strconv.ParseUint(state.LocalPort(), 10, 16)
 	if err != nil {
 		return err
 	}
