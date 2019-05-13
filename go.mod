@@ -1,4 +1,4 @@
-module github.com/tomsanbear/coredns-xpf-plugin
+module github.com/tomsanbear/xpf
 
 go 1.12
 
