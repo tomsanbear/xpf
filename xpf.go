@@ -47,11 +47,12 @@ func appendXpfRecord(state *request.Request) error {
 	xpfRR := &dns.PrivateRR{}
 
 	xpfRRData := &XPFPrivateRR{}
-	if ipVersion := net.ParseIP(state.LocalIP()).To4(); ipVersion != nil {
+	switch state.Family() {
+	case 1:
 		xpfRRData.IPVersion = 4
 		xpfRRData.SrcAddress = net.ParseIP(state.IP()).To4()
 		xpfRRData.DestAddress = net.ParseIP(state.LocalIP()).To4()
-	} else if ipVersion := net.ParseIP(state.LocalIP()).To16(); ipVersion != nil {
+	case 2:
 		xpfRRData.IPVersion = 6
 		xpfRRData.SrcAddress = net.ParseIP(state.IP()).To16()
 		xpfRRData.DestAddress = net.ParseIP(state.LocalIP()).To16()
