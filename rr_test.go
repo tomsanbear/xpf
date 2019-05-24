@@ -92,3 +92,32 @@ func TestPackXPF(t *testing.T) {
 		}
 	}
 }
+
+func TestLenXPF(t *testing.T) {
+	tests := []struct {
+		rr          XPFPrivateRR
+		expectedLen int
+	}{
+		{XPFPrivateRR{4, 16, net.IPv4(1, 2, 3, 4).To4(), net.IPv4(1, 2, 3, 4).To4(), 53, 533}, 14},
+		{XPFPrivateRR{6, 16, net.IP{0xff, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01}.To16(), net.IP{0xff, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01}.To16(), 53, 533}, 38},
+	}
+
+	for _, test := range tests {
+		assert.Equal(t, test.expectedLen, test.rr.Len())
+	}
+}
+
+func TestCopyXPF(t *testing.T) {
+	tests := []struct {
+		rr XPFPrivateRR
+	}{
+		{XPFPrivateRR{4, 16, net.IPv4(1, 2, 3, 4).To4(), net.IPv4(1, 2, 3, 4).To4(), 53, 533}},
+		{XPFPrivateRR{6, 16, net.IP{0xff, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01}.To16(), net.IP{0xff, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01}.To16(), 53, 533}},
+	}
+
+	for _, test := range tests {
+		actual := new(XPFPrivateRR)
+		test.rr.Copy(actual)
+		assert.Equal(t, &test.rr, actual)
+	}
+}
