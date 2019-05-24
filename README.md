@@ -14,11 +14,6 @@ These instructions will get you a copy of the project up and running on your loc
 - Go 1.12 or later
 - Go modules should be enabled
 
-All you need to do is add the following line to your plugins.cfg in the CoreDNS project:
-xpf:github.com/tomsanbear/xpf
-
-Build the binary and go from there
-
 ### Installing
 
 1. First clone the CoreDNS repository [CoreDNS](https://github.com/coredns/coredns)
@@ -58,6 +53,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Coredns for being a great DNS server/project
+* [CoreDNS](https://github.com/coredns/coredns) for being a great DNS server/project
 * [Ray Bellis](https://github.com/raybellis) for the initial draft on [DNS XPF](https://www.ietf.org/archive/id/draft-bellis-dnsop-xpf-04.txt)
 * [PurpleBooth](https://github.com/PurpleBooth) for the nice Readme template
