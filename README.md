@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/tomsanbear/coredns-xpf-plugin.svg?branch=master)](https://travis-ci.org/tomsanbear/coredns-xpf-plugin) [![codecov](https://codecov.io/gh/tomsanbear/coredns-xpf-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/tomsanbear/coredns-xpf-plugin)
-
+[![Build Status](https://travis-ci.org/tomsanbear/xpf.svg?branch=master)](https://travis-ci.org/tomsanbear/xpf) [![codecov](https://codecov.io/gh/tomsanbear/xpf/branch/master/graph/badge.svg)](https://codecov.io/gh/tomsanbear/xpf)
 
 
 # CoreDNS XPF
@@ -32,6 +31,8 @@ Due to the way the server chains plugins, you need to ensure that any plugin tha
 ## Running the tests
 
 Test coverage is still a little lacking, but I'm looking to get the full thing tested, with performance metrics as well in the future. 
+
+Just run ```go test ./...``` for the main suite, and 
 
 ### Code Style Tests
 
