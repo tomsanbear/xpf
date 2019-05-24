@@ -41,7 +41,7 @@ func BenchmarkAppendXpfRecord(b *testing.B) {
 	testrequest.SetQuestion("example.org.", dns.TypeA)
 	teststate := request.Request{W: &test.ResponseWriter{}, Req: testrequest}
 	for n := 0; n < b.N; n++ {
-		appendXpfRecord(&teststate)
+		_ = appendXpfRecord(&teststate)
 	}
 }
 
