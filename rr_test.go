@@ -117,7 +117,7 @@ func TestCopyXPF(t *testing.T) {
 
 	for _, test := range tests {
 		actual := new(XPFPrivateRR)
-		test.rr.Copy(actual)
+		_ = test.rr.Copy(actual)
 		assert.Equal(t, &test.rr, actual)
 	}
 }
