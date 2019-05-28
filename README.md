@@ -23,6 +23,19 @@ These instructions will get you a copy of the project up and running on your loc
 Plugin Note:
 Due to the way the server chains plugins, you need to ensure that any plugin that comes after this one, in the plugin.cfg, does not care about the record being there. See the plugins.cfg file comments for more detail.
 
+### Corefile Configuration
+
+Example usage within a Corefile:
+```
+.:53 {
+    xpf {
+        rr_type 65422
+    }
+    forward . 8.8.8.8
+}
+```
+Note: Do consider the security risks of forwarding this record to the upstream server. You (should) only be doing this for internal resolvers
+
 ## Running the tests
 
 Test coverage is still a little lacking, but I'm looking to get the full thing tested, with performance metrics as well in the future. 
