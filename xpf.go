@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/coredns/coredns/plugin"
-	"github.com/coredns/coredns/plugin/pkg/dnstest"
 	clog "github.com/coredns/coredns/plugin/pkg/log"
 	"github.com/coredns/coredns/request"
 	"github.com/miekg/dns"
@@ -32,14 +31,13 @@ func New() (*XPF, error) {
 
 func (xpf *XPF) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (rc int, err error) {
 	state := request.Request{W: w, Req: r}
-	rrw := dnstest.NewRecorder(w)
 
 	err = appendXpfRecord(xpf.rrtype, &state)
 	if err != nil {
 		log.Errorf("xpf append failed with: %v", err)
 		return rc, &Error{"failed to append the XPF record to the DNS request"}
 	}
-	rc, err = plugin.NextOrFailure(xpf.Name(), xpf.Next, ctx, rrw, r)
+	rc, err = plugin.NextOrFailure(xpf.Name(), xpf.Next, ctx, w, r)
 	return rc, err
 }
 
@@ -102,14 +100,15 @@ func protoIANA(proto string) (uint8, error) {
 }
 
 // OnStartup handles any plugin specific startup logic
-func (x *XPF) OnStartup() (err error) {
+func (xpf *XPF) OnStartup() (err error) {
 	// Setup up the new record type
-	dns.PrivateHandle("XPF", x.rrtype, NewXPFPrivateRR)
+	log.Infof("Registered new XPF RR with type code: %v", xpf.rrtype)
+	dns.PrivateHandle("XPF", xpf.rrtype, NewXPFPrivateRR)
 	return nil
 }
 
 // OnShutdown handles any plugin specific startup logic
-func (x *XPF) OnShutdown() (err error) {
-	dns.PrivateHandleRemove(x.rrtype)
+func (xpf *XPF) OnShutdown() (err error) {
+	dns.PrivateHandleRemove(xpf.rrtype)
 	return nil
 }
