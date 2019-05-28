@@ -13,25 +13,28 @@ import (
 	"golang.org/x/net/context"
 )
 
-const TypeXPF uint16 = 65422
-
 var log = clog.NewWithPlugin("xpf")
+
+// DefaultTypeXPF uses the default rrtype used in wireshark
+const DefaultTypeXPF uint16 = 65422
 
 // XPF type captures anything needed to append the XPF record to our queries
 type XPF struct {
+	rrtype uint16
+
 	Next plugin.Handler
 }
 
 // New creates a new instance of the XPF type
 func New() (*XPF, error) {
-	return &XPF{}, nil
+	return &XPF{rrtype: DefaultTypeXPF}, nil
 }
 
 func (xpf *XPF) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (rc int, err error) {
 	state := request.Request{W: w, Req: r}
 	rrw := dnstest.NewRecorder(w)
 
-	err = appendXpfRecord(&state)
+	err = appendXpfRecord(xpf.rrtype, &state)
 	if err != nil {
 		log.Errorf("xpf append failed with: %v", err)
 		return rc, &Error{"failed to append the XPF record to the DNS request"}
@@ -43,7 +46,7 @@ func (xpf *XPF) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) 
 func (xpf *XPF) Name() string { return "xpf" }
 
 // AppendXpfRecord adds the relevant XPF record to the request object
-func appendXpfRecord(state *request.Request) error {
+func appendXpfRecord(rrtype uint16, state *request.Request) error {
 	xpfRR := &dns.PrivateRR{}
 
 	xpfRRData := &XPFPrivateRR{}
@@ -77,7 +80,7 @@ func appendXpfRecord(state *request.Request) error {
 
 	xpfRR.Hdr = dns.RR_Header{
 		Name:   ".",
-		Rrtype: TypeXPF,
+		Rrtype: rrtype,
 		Class:  1,
 		Ttl:    0,
 	}
@@ -101,12 +104,12 @@ func protoIANA(proto string) (uint8, error) {
 // OnStartup handles any plugin specific startup logic
 func (x *XPF) OnStartup() (err error) {
 	// Setup up the new record type
-	dns.PrivateHandle("XPF", TypeXPF, NewXPFPrivateRR)
+	dns.PrivateHandle("XPF", x.rrtype, NewXPFPrivateRR)
 	return nil
 }
 
 // OnShutdown handles any plugin specific startup logic
 func (x *XPF) OnShutdown() (err error) {
-	dns.PrivateHandleRemove(TypeXPF)
+	dns.PrivateHandleRemove(x.rrtype)
 	return nil
 }

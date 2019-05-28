@@ -1,9 +1,12 @@
 package xpf
 
 import (
+	"strconv"
+
 	"github.com/coredns/coredns/core/dnsserver"
 	"github.com/coredns/coredns/plugin"
 	"github.com/mholt/caddy"
+	"github.com/mholt/caddy/caddyfile"
 )
 
 // PluginName is the name of our plugin
@@ -42,9 +45,48 @@ func setup(c *caddy.Controller) error {
 }
 
 func parseXpf(c *caddy.Controller) (*XPF, error) {
-	x, err := New()
+	x, err := parseXpfStanza(&c.Dispenser)
 	if err != nil {
 		return x, err
 	}
 	return x, nil
+}
+
+func parseXpfStanza(c *caddyfile.Dispenser) (*XPF, error) {
+	x, err := New()
+	if err != nil {
+		return x, err
+	}
+
+	// Ensure there are no arguments outside the stanza
+
+	// Parse the block if it's there
+	for c.Next() {
+		for c.NextBlock() {
+			if err := parseXpfBlock(c, x); err != nil {
+				return x, err
+			}
+		}
+	}
+	return x, nil
+}
+
+func parseXpfBlock(c *caddyfile.Dispenser, x *XPF) (err error) {
+	switch c.Val() {
+	case "rr_type":
+		if arg := c.NextArg(); !arg {
+			return c.Errf("missing rr_type argument")
+		}
+		rrtype64, err := strconv.ParseUint(c.Val(), 10, 16)
+		if err != nil {
+			return c.Errf("failed to parse RR record type: %v", c.Val())
+		}
+		if rrtype64 < 65280 || rrtype64 > 65534 {
+			return c.Errf("invalid private RR record type: %v", c.Val())
+		}
+		x.rrtype = uint16(rrtype64)
+	default:
+		return c.Errf("unknown property '%s'", c.Val())
+	}
+	return nil
 }

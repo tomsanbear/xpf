@@ -23,7 +23,7 @@ func TestAppendXpfRecordV4(t *testing.T) {
 	testrequest := new(dns.Msg)
 	testrequest.SetQuestion("example.org.", dns.TypeA)
 	teststate := request.Request{W: &coretest.ResponseWriter{}, Req: testrequest}
-	err := appendXpfRecord(&teststate)
+	err := appendXpfRecord(DefaultTypeXPF, &teststate)
 	assert.NoError(t, err)
 	assert.True(t, containsXpfRR(teststate, XPFPrivateRR{4, 17, net.IPv4(10, 240, 0, 1).To4(), net.IPv4(127, 0, 0, 1).To4(), 40212, 53}), "failed to find an expected XPF Data object in additional section\n")
 }
@@ -32,7 +32,7 @@ func TestAppendXpfRecordV6(t *testing.T) {
 	testrequest := new(dns.Msg)
 	testrequest.SetQuestion("example.org.", dns.TypeAAAA)
 	teststate := request.Request{W: &coretest.ResponseWriter6{}, Req: testrequest}
-	err := appendXpfRecord(&teststate)
+	err := appendXpfRecord(DefaultTypeXPF, &teststate)
 	assert.NoError(t, err)
 	assert.True(t, containsXpfRR(teststate, XPFPrivateRR{6, 17, net.ParseIP("fe80::42:ff:feca:4c65"), net.IP{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, 40212, 53}), "failed to find an expected XPF Data object in additional section\n")
 }
@@ -42,7 +42,7 @@ func BenchmarkAppendXpfRecord(b *testing.B) {
 	testrequest.SetQuestion("example.org.", dns.TypeA)
 	teststate := request.Request{W: &test.ResponseWriter{}, Req: testrequest}
 	for n := 0; n < b.N; n++ {
-		_ = appendXpfRecord(&teststate)
+		_ = appendXpfRecord(DefaultTypeXPF, &teststate)
 	}
 }
 
