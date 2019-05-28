@@ -45,10 +45,27 @@ func setup(c *caddy.Controller) error {
 }
 
 func parseXpf(c *caddy.Controller) (*XPF, error) {
-	x, err := parseXpfStanza(&c.Dispenser)
-	if err != nil {
-		return x, err
+	var (
+		x   *XPF
+		err error
+		i   int
+	)
+
+	// Ensure only one block present ever
+	for c.Next() {
+		if i > 0 {
+			return nil, plugin.ErrOnce
+		}
+		i++
+		if len(c.RemainingArgs()) > 0 {
+			return x, c.Errf("invalid argument trailing xpf %v", c.RemainingArgs())
+		}
+		x, err = parseXpfStanza(&c.Dispenser)
+		if err != nil {
+			return x, err
+		}
 	}
+
 	return x, nil
 }
 
@@ -58,14 +75,10 @@ func parseXpfStanza(c *caddyfile.Dispenser) (*XPF, error) {
 		return x, err
 	}
 
-	// Ensure there are no arguments outside the stanza
-
-	// Parse the block if it's there
-	for c.Next() {
-		for c.NextBlock() {
-			if err := parseXpfBlock(c, x); err != nil {
-				return x, err
-			}
+	// xpf stanza if present
+	for c.NextBlock() {
+		if err := parseXpfBlock(c, x); err != nil {
+			return x, err
 		}
 	}
 	return x, nil
