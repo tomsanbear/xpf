@@ -97,3 +97,16 @@ func protoIANA(proto string) (uint8, error) {
 	}
 	return 0, fmt.Errorf("invalid network protocol: %v", proto)
 }
+
+// OnStartup handles any plugin specific startup logic
+func (x *XPF) OnStartup() (err error) {
+	// Setup up the new record type
+	dns.PrivateHandle("XPF", TypeXPF, NewXPFPrivateRR)
+	return nil
+}
+
+// OnShutdown handles any plugin specific startup logic
+func (x *XPF) OnShutdown() (err error) {
+	dns.PrivateHandleRemove(TypeXPF)
+	return nil
+}

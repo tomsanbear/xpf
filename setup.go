@@ -4,7 +4,6 @@ import (
 	"github.com/coredns/coredns/core/dnsserver"
 	"github.com/coredns/coredns/plugin"
 	"github.com/mholt/caddy"
-	"github.com/miekg/dns"
 )
 
 // PluginName is the name of our plugin
@@ -48,17 +47,4 @@ func parseXpf(c *caddy.Controller) (*XPF, error) {
 		return x, err
 	}
 	return x, nil
-}
-
-// OnStartup handles any plugin specific startup logic
-func (x *XPF) OnStartup() (err error) {
-	// Setup up the new record type
-	dns.PrivateHandle("XPF", TypeXPF, NewXPFPrivateRR)
-	return nil
-}
-
-// OnShutdown handles any plugin specific startup logic
-func (x *XPF) OnShutdown() (err error) {
-	dns.PrivateHandleRemove(TypeXPF)
-	return nil
 }
