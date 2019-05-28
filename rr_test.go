@@ -23,8 +23,8 @@ func TestParseXPF(t *testing.T) {
 		{strings.Join([]string{".", "0", "IN", "XPF", "4", "18", "1.2.3.4", "5.6.7.8", "1000", "1001"}, "\t"), true},
 	}
 
-	dns.PrivateHandle("XPF", TypeXPF, NewXPFPrivateRR)
-	defer dns.PrivateHandleRemove(TypeXPF)
+	dns.PrivateHandle("XPF", DefaultTypeXPF, NewXPFPrivateRR)
+	defer dns.PrivateHandleRemove(DefaultTypeXPF)
 
 	for _, test := range tests {
 		rr, err := dns.NewRR(test.testrecord)
