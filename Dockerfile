@@ -11,7 +11,7 @@ ADD plugin.cfg /go/src/coredns/plugin.cfg
 
 WORKDIR /go/src/coredns
 
-RUN GO111MODULE=on GOOS=linux make
+RUN make gen && GOOS=linux make
 
 # For the certs
 FROM debian:stable-slim as certs

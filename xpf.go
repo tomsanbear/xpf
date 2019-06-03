@@ -29,6 +29,7 @@ func New() (*XPF, error) {
 	return &XPF{rrtype: DefaultTypeXPF}, nil
 }
 
+// ServeDNS is the handler provided by the CaddyServer we are implementing
 func (xpf *XPF) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (rc int, err error) {
 	state := request.Request{W: w, Req: r}
 
@@ -37,10 +38,12 @@ func (xpf *XPF) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) 
 		log.Errorf("xpf append failed with: %v", err)
 		return rc, &Error{"failed to append the XPF record to the DNS request"}
 	}
+
 	rc, err = plugin.NextOrFailure(xpf.Name(), xpf.Next, ctx, w, r)
 	return rc, err
 }
 
+// Name is the name of the plugin
 func (xpf *XPF) Name() string { return "xpf" }
 
 // AppendXpfRecord adds the relevant XPF record to the request object
