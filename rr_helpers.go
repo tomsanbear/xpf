@@ -137,7 +137,7 @@ func parsePort(s string) (ui uint16, err error) {
 	if err != nil {
 		return ui, err
 	}
-	if i <= 0 {
+	if i < 0 || i > 65535 {
 		return ui, fmt.Errorf("invalid port number %v", i)
 	}
 	return uint16(i), err

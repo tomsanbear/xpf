@@ -66,11 +66,17 @@ func appendXpfRecord(rrtype uint16, state *request.Request) error {
 		return err
 	}
 	xpfRRData.SrcPort = uint16(srcPort64)
+	if xpfRRData.SrcPort == 0 {
+		return fmt.Errorf("source Port is missing")
+	}
 	destPort64, err := strconv.ParseUint(state.LocalPort(), 10, 16)
 	if err != nil {
 		return err
 	}
 	xpfRRData.DestPort = uint16(destPort64)
+	if xpfRRData.DestPort == 0 {
+		return fmt.Errorf("dest Port is missing")
+	}
 	xpfRRData.Protocol, err = protoIANA(state.Proto())
 	if err != nil {
 		return err
