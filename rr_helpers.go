@@ -133,6 +133,9 @@ func parseIPAddress(s string, version uint8) (net.IP, error) {
 }
 
 func parsePort(s string) (ui uint16, err error) {
+	if s == "" {
+		return ui, fmt.Errorf("port cannot be empty")
+	}
 	i, err := strconv.Atoi(s)
 	if err != nil {
 		return ui, err

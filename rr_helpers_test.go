@@ -12,6 +12,7 @@ func TestUint8(t *testing.T) {
 		shouldErr bool
 	}{
 		{8, false},
+		{0, false},
 	}
 
 	for _, test := range tests {
@@ -39,6 +40,7 @@ func TestUint16(t *testing.T) {
 		shouldErr bool
 	}{
 		{8, false},
+		{0, false},
 	}
 
 	for _, test := range tests {
