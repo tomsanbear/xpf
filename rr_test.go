@@ -21,6 +21,7 @@ func TestParseXPF(t *testing.T) {
 		{strings.Join([]string{".", "0", "IN", "XPF", "4", "17", "1.2.3.4", "5.6.7.8", "not an int", "1001"}, "\t"), true},
 		{strings.Join([]string{".", "0", "IN", "XPF", "7", "17", "1.2.3.4", "5.6.7.8", "1000", "1001"}, "\t"), true},
 		{strings.Join([]string{".", "0", "IN", "XPF", "4", "18", "1.2.3.4", "5.6.7.8", "1000", "1001"}, "\t"), true},
+		{strings.Join([]string{".", "0", "IN", "XPF", "4", "18", "1.2.3.4", "5.6.7.8"}, "\t"), true},
 	}
 
 	dns.PrivateHandle("XPF", DefaultTypeXPF, NewXPFPrivateRR)
@@ -45,6 +46,7 @@ func TestPackXPF(t *testing.T) {
 		shouldErr  bool
 	}{
 		{XPFPrivateRR{4, 16, net.IPv4(1, 2, 3, 4).To4(), net.IPv4(1, 2, 3, 4).To4(), 53, 533}, false},
+		{XPFPrivateRR{4, 16, net.IPv4(1, 2, 3, 4).To4(), net.IPv4(1, 2, 3, 4).To4(), 0, 0}, false},
 	}
 
 	for _, test := range testsV4 {

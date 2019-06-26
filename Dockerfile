@@ -5,7 +5,7 @@ WORKDIR /go/src
 
 RUN git clone https://github.com/coredns/coredns.git && \
     cd coredns && \
-    git checkout v1.5.0
+    git checkout v1.5.1
 
 ADD plugin.cfg /go/src/coredns/plugin.cfg
 

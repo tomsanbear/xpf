@@ -183,6 +183,7 @@ func (rr *XPFPrivateRR) Unpack(msg []byte) (off int, err error) {
 	return off, nil
 }
 
+// Copy the existing RR to a new RR
 func (rr *XPFPrivateRR) Copy(dest dns.PrivateRdata) error {
 	xpf, ok := dest.(*XPFPrivateRR)
 	if !ok {
