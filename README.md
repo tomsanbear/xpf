@@ -26,6 +26,7 @@ Due to the way the server chains plugins, you need to ensure that any plugin tha
 ### Corefile Configuration
 
 Example usage within a Corefile:
+
 ```
 .:53 {
     xpf {
@@ -34,7 +35,12 @@ Example usage within a Corefile:
     forward . 8.8.8.8
 }
 ```
+
 Note: Do consider the security risks of forwarding this record to the upstream server. You (should) only be doing this for internal resolvers
+
+### Known (Strange) Behaviour
+
+Currently, there is missing functionality on getting the Local IP Address for the CoreDNS server, if the user bound 0.0.0.0 (or ::), aka using the most common config. There is no convenient solution for this yet, and there are some different approaches to this. Check out [this issue](https://github.com/tomsanbear/xpf/issues/7) for more details.
 
 ## Running the tests
 
