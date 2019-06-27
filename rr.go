@@ -22,7 +22,7 @@ func NewXPFPrivateRR() dns.PrivateRdata {
 }
 
 func (rr *XPFPrivateRR) Len() int {
-	var l int
+	l := 0
 	l++ // IpVersion
 	l++ // Protocol
 	switch rr.IPVersion {
@@ -36,7 +36,6 @@ func (rr *XPFPrivateRR) Len() int {
 	}
 	l += 2 // SrcPort
 	l += 2 // DestPort
-	//
 	return l
 }
 

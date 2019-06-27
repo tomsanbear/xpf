@@ -1,6 +1,7 @@
 package xpf
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"strconv"
@@ -9,7 +10,6 @@ import (
 	clog "github.com/coredns/coredns/plugin/pkg/log"
 	"github.com/coredns/coredns/request"
 	"github.com/miekg/dns"
-	"golang.org/x/net/context"
 )
 
 var log = clog.NewWithPlugin("xpf")
@@ -55,7 +55,14 @@ func appendXpfRecord(rrtype uint16, state *request.Request) error {
 	case 1:
 		xpfRRData.IPVersion = 4
 		xpfRRData.SrcAddress = net.ParseIP(state.IP()).To4()
+		if xpfRRData.SrcAddress == nil {
+			return fmt.Errorf("source address is missing from the request")
+		}
 		xpfRRData.DestAddress = net.ParseIP(state.LocalIP()).To4()
+		if xpfRRData.DestAddress == nil {
+			// TODO: this really needs to provide our IP address, going to open a defect for now
+			xpfRRData.DestAddress = net.IPv4(0, 0, 0, 0).To4()
+		}
 	case 2:
 		xpfRRData.IPVersion = 6
 		xpfRRData.SrcAddress = net.ParseIP(state.IP()).To16()
