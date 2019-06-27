@@ -64,9 +64,9 @@ github.com/stretchr/testify/assert
 golang.org/x/crypto/ed25519
 golang.org/x/crypto/ed25519/internal/edwards25519
 # golang.org/x/net v0.0.0-20190619014844-b5b0513f8c1b
-golang.org/x/net/context
 golang.org/x/net/ipv4
 golang.org/x/net/ipv6
+golang.org/x/net/context
 golang.org/x/net/trace
 golang.org/x/net/bpf
 golang.org/x/net/internal/iana
