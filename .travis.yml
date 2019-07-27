@@ -7,6 +7,7 @@ git:
   depth: 1
 
 install:
+  - npm install -g snyk
   - snyk test
 
 before_script:
